@@ -1,0 +1,331 @@
+basePath: /api/v1
+definitions:
+  github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse:
+    properties:
+      body:
+        $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ResponseBodyError'
+      status:
+        type: integer
+    type: object
+  github_com_SanExpett_marketplace-backend_internal_server_delivery.Response:
+    properties:
+      body:
+        $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ResponseBody'
+      status:
+        type: integer
+    type: object
+  github_com_SanExpett_marketplace-backend_internal_server_delivery.ResponseBody:
+    properties:
+      message:
+        type: string
+    type: object
+  github_com_SanExpett_marketplace-backend_internal_server_delivery.ResponseBodyError:
+    properties:
+      error:
+        type: string
+    type: object
+  github_com_SanExpett_marketplace-backend_pkg_models.PreProduct:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: integer
+      saler_id:
+        type: integer
+      title:
+        type: string
+    type: object
+  github_com_SanExpett_marketplace-backend_pkg_models.Product:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      price:
+        type: integer
+      saler_id:
+        type: integer
+      title:
+        type: string
+    type: object
+  github_com_SanExpett_marketplace-backend_pkg_models.ProductWithIsMy:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      is_my:
+        type: boolean
+      price:
+        type: integer
+      saler_id:
+        type: integer
+      title:
+        type: string
+    type: object
+  github_com_SanExpett_marketplace-backend_pkg_models.UserWithoutID:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  internal_product_delivery.ProductListResponse:
+    properties:
+      body:
+        items:
+          $ref: '#/definitions/github_com_SanExpett_marketplace-backend_pkg_models.ProductWithIsMy'
+        type: array
+      status:
+        type: integer
+    type: object
+  internal_product_delivery.ProductResponse:
+    properties:
+      body:
+        $ref: '#/definitions/github_com_SanExpett_marketplace-backend_pkg_models.Product'
+      status:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is a server of MARKETPLACE server.
+  title: MARKETPLACE project API
+  version: "1.0"
+paths:
+  /Product/get_list:
+    get:
+      consumes:
+      - application/json
+      description: get Products by count and last_id return old Products
+      parameters:
+      - description: limit Products
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: offset of Products
+        in: query
+        name: offset
+        required: true
+        type: integer
+      - description: min price of product
+        in: query
+        name: min_price
+        required: true
+        type: integer
+      - description: max price of product
+        in: query
+        name: max_price
+        required: true
+        type: integer
+      - description: type of sort(nil - by date desc, 1 - by price asc, 2 - by price
+          desc, 3 - by date asc, 4 - by date desc)
+        in: query
+        name: sort_type
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_product_delivery.ProductListResponse'
+        "222":
+          description: Error
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get Products list
+      tags:
+      - product
+  /logout:
+    post:
+      description: logout in app
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.Response'
+        "222":
+          description: Error
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: logout
+      tags:
+      - auth
+  /product/add:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        add product by data
+        Error.status can be:
+        StatusErrBadRequest      = 400
+        StatusErrInternalServer  = 500
+      parameters:
+      - description: product data for adding
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_SanExpett_marketplace-backend_pkg_models.PreProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_product_delivery.ProductResponse'
+        "222":
+          description: Error
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: add product
+      tags:
+      - product
+  /product/get:
+    get:
+      consumes:
+      - application/json
+      description: get product by id
+      parameters:
+      - description: product id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_product_delivery.ProductResponse'
+        "222":
+          description: Error
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: get product
+      tags:
+      - product
+  /signin:
+    get:
+      description: signin in app
+      parameters:
+      - description: user login for signin
+        in: query
+        name: login
+        required: true
+        type: string
+      - description: user password for signin
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.Response'
+        "222":
+          description: Error
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: signin
+      tags:
+      - auth
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        signup in app
+        Error.status can be:
+        StatusErrBadRequest      = 400
+        StatusErrInternalServer  = 500
+      parameters:
+      - description: user data for signup
+        in: body
+        name: preUser
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_SanExpett_marketplace-backend_pkg_models.UserWithoutID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.Response'
+        "222":
+          description: Error
+          schema:
+            $ref: '#/definitions/github_com_SanExpett_marketplace-backend_internal_server_delivery.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: signup
+      tags:
+      - auth
+schemes:
+- http
+swagger: "2.0"
